@@ -45,24 +45,8 @@ func NewNetGlue(rcvr interface{}, output chan interface{}) (connect *NetGlue, er
 	}
 	//run listener
 	go connect.runListener(listen)
-
-	client, err := rpc.Dial(Network, OutAddr)
-	if err != nil {
-		if Verbose {
-			log.Println("Client connect err", err)
-			log.Println("Sleep 5 second and try again.")
-		}
-		time.Sleep(5 * time.Second)
-		client, err = rpc.Dial(Network, OutAddr)
-		if err != nil {
-			return nil, err
-		}
-	}
-	if Verbose {
-		log.Println("Connect success", Network, OutAddr)
-	}
 	//run sender
-	go connect.runSender(client)
+	go connect.runSender()
 
 	return
 }
@@ -89,16 +73,20 @@ func (p *NetGlue) runListener(listen net.Listener) {
 	}
 }
 
-func (p *NetGlue) runSender(client *rpc.Client) {
+func (p *NetGlue) runSender() {
+	var (
+		client *rpc.Client
+		err    error
+	)
 	for {
 		select {
 		//waiting msg from self queue
 		case msg := <-p.queue:
 			//connect to OutAddr
-			client, err := rpc.Dial(Network, OutAddr)
+			client, err = rpc.Dial(Network, OutAddr)
 			if err == nil {
 				//send msg
-				err := client.Call(msg.ServiceMethod, msg.Args, msg.Reply)
+				err = client.Call(msg.ServiceMethod, msg.Args, msg.Reply)
 				if err != nil && Verbose {
 					log.Println(err)
 				}
