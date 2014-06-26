@@ -39,7 +39,7 @@ func main() {
     netglue.InAddr = ":8889"
     netglue.Verbose = true
     result := make(chan interface{})
-    foo, err := netglue.NewNetGlue(&Pinger{}, result)
+    foo, err := netglue.New(&Pinger{}, result)
     if err != nil {
         log.Fatalln(err)
     }
@@ -88,7 +88,7 @@ func main() {
     netglue.InAddr = ":8888"
     netglue.Verbose = true
     result := make(chan interface{})
-    foo, err := netglue.NewNetGlue(&Ponger{}, result)
+    foo, err := netglue.New(&Ponger{}, result)
     if err != nil {
         log.Fatalln(err)
     }

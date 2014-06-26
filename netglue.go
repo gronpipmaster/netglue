@@ -32,7 +32,7 @@ type NetGlue struct {
 }
 
 //Create new NetGlue server, listen to InAddr and run sender for OutAddr
-func NewNetGlue(rcvr interface{}, output chan interface{}) (connect *NetGlue, err error) {
+func New(rcvr interface{}, output chan interface{}) (connect *NetGlue, err error) {
 	connect = &NetGlue{make(chan *msg, BufferSize), output}
 	//construct listen
 	rpc.Register(rcvr)
